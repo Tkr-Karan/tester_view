@@ -1,11 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { useParams } from "react-router-dom";
-import './BlockTest.css';
+import "./BlockTest.css";
+import VideoControl from "./VideoControl";
 
 export default function BlockTest() {
   const { id } = useParams();
   const [test, setTest] = useState(null);
+
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
+  const playerRef = useRef(null);
+
+  const handleSelectTime = (start, end) => {
+    setStartTime(start);
+    setEndTime(end);
+
+    if (playerRef.current) {
+      playerRef.current.seekTo(start);
+      //   playerRef.current.play();
+    }
+  };
+
+  const handleProgress = (progress) => {
+    // Check if the video reached the end time and pause it
+    if (progress.playedSeconds >= endTime) {
+      if (playerRef.current) {
+        playerRef.current.getInternalPlayer().pause();
+      }
+    }
+  };
 
   const fetchBlockById = async (blockID) => {
     console.log(blockID);
@@ -30,7 +54,14 @@ export default function BlockTest() {
   return (
     <div>
       {test && (
-        <div style={{display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <h2>{test.data.title}</h2>
           <p>{test.data.description}</p>
 
@@ -44,12 +75,22 @@ export default function BlockTest() {
             <div>
               {test.data.urls.map((video) => {
                 return (
-                  <ReactPlayer
-                    url={video}
-                    width={400}
-                    height={200}
-                    controls={true}
-                  />
+                  <div>
+                    <ReactPlayer
+                      url={video}
+                      width={400}
+                      height={200}
+                      controls={true}
+                      ref={playerRef}
+                      onProgress={handleProgress}
+                      
+                    />
+                    <VideoControl onSelectTime={handleSelectTime} />{" "}
+                    <div>
+                      Selected Time Range: {startTime} seconds - {endTime}{" "}
+                      seconds
+                    </div>
+                  </div>
                 );
               })}
             </div>
