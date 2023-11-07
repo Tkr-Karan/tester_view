@@ -6,9 +6,9 @@
   justify-content: center;
 }
 
-.tester-block-container{
+.tester-block-container {
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;

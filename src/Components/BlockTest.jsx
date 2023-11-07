@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { useNavigate, useParams } from "react-router-dom";
-import "./BlockTest.css";
+import "../Stylesheets/BlockTest.css";
 import VideoControl from "./VideoControl";
 import { Analytic } from "../api/AnalyticApi";
 import { ToastContainer, toast } from "react-toastify";
