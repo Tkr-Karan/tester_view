@@ -1,17 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Loader from "../Atoms/Loader";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addToTesterData } from "../store/testerSlice";
 
 export default function TesterView() {
-  const [testerData, setTesterData] = useState([]);
+  const testerData = useSelector((state) => state.tester.testerDataList);
+
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   const fetchingPublishedData = async () => {
-    await fetch("/api/published/published-data")
-      .then((res) => res.json())
-      .then((data) => {
-        setTesterData(data.result);
+    try {
+      const response = await fetch("/api/published/published-data");
+      const data = await response.json();
+
+      data.result.forEach((blocks) => {
+        dispatch(addToTesterData(blocks));
       });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -48,7 +58,7 @@ export default function TesterView() {
           alignItems: "center",
         }}
       >
-        {testerData.length !== 0 ? (
+        {testerData.length >= 1 ? (
           <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
             {" "}
             {testerData.map((test) => {
