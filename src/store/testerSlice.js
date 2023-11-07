@@ -7,7 +7,7 @@ const testerSlice = createSlice({
   },
   reducers: {
     addToTesterData(state, action) {
-      state.testerDataList.push(action.payload);
+      state.testerDataList = action.payload;
     },
   },
 });

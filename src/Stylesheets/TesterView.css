@@ -1,0 +1,34 @@
+.loader-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tester-block-container{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.tester-data {
+  width: 95%;
+  height: 100%;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tester-blocks {
+  width: 10rem;
+  box-shadow: 3px 3px 5px grey;
+  background-color: lightseagreen;
+  border-radius: 20px;
+  padding: 1rem;
+  cursor: pointer;
+}
