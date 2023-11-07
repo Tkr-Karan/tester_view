@@ -6,17 +6,19 @@ import VideoControl from "./VideoControl";
 import { Analytic } from "../api/AnalyticApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
+import { addingImgUrl, testedBlockById } from "../store/blockSlice";
+import { fetchTestedBlockById } from "../services";
 
 export default function BlockTest() {
   const { id } = useParams();
-  const [test, setTest] = useState(null);
+  const test = useSelector((state) => state.block.testedBlocks);
+  const imgUrl = useSelector((state) => state.block.blockimageUrl);
+  const dispatch = useDispatch();
 
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const playerRef = useRef(null);
-
-  //image tested urls
-  const [imgUrl, setImgUrl] = useState([]);
 
   const navigate = useNavigate();
 
@@ -40,16 +42,9 @@ export default function BlockTest() {
   };
 
   const fetchBlockById = async (blockID) => {
-    console.log(blockID);
     try {
-      const response = await fetch(`/api/published/published-block/${blockID}`);
-      if (response.ok) {
-        const data = await response.json();
-        // console.log(data.data);
-        setTest(data);
-      } else {
-        console.error("Failed to fetch data");
-      }
+      const response = await fetchTestedBlockById(blockID);
+      dispatch(testedBlockById(response));
     } catch (error) {
       console.error("Error while fetching data: ", error);
     }
@@ -61,8 +56,8 @@ export default function BlockTest() {
 
   const handleImageClick = (src) => {
     if (imgUrl.length < 2) {
-      const selected = [...imgUrl, src];
-      setImgUrl(selected);
+      const selectedImg = [...imgUrl, src];
+      dispatch(addingImgUrl(...selectedImg));
     } else {
       console.log(imgUrl);
       toast.error("selection limit reached");
@@ -71,7 +66,6 @@ export default function BlockTest() {
 
   const handleTestSubmit = async (title) => {
     console.log("test submit!!");
-
     try {
       const testData = {
         title: title,
@@ -139,7 +133,7 @@ export default function BlockTest() {
               })}
             </div>
           )}
-          {imgUrl.length === 2 && (
+          {imgUrl.length == 2 && (
             <div>
               <div
                 style={{
