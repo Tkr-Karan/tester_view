@@ -7,7 +7,11 @@ import { Analytic } from "../api/AnalyticApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
-import { addingImgUrl, testedBlockById } from "../store/blockSlice";
+import {
+  addingImgUrl,
+  removeFirstAddNew,
+  testedBlockById,
+} from "../store/blockSlice";
 import { fetchTestedBlockById } from "../services";
 
 export default function BlockTest() {
@@ -15,6 +19,7 @@ export default function BlockTest() {
   const test = useSelector((state) => state.block.testedBlocks);
   const imgUrl = useSelector((state) => state.block.blockimageUrl);
   const dispatch = useDispatch();
+  const [selectedImages, setSelectedImages] = useState([]);
 
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
@@ -28,7 +33,6 @@ export default function BlockTest() {
 
     if (playerRef.current) {
       playerRef.current.seekTo(start);
-      //   playerRef.current.play();
     }
   };
 
@@ -60,7 +64,16 @@ export default function BlockTest() {
       dispatch(addingImgUrl(...selectedImg));
     } else {
       console.log(imgUrl);
-      toast.error("selection limit reached");
+      dispatch(removeFirstAddNew(src));
+      selectedImages.shift();
+      setSelectedImages(selectedImages.filter((image) => image !== src));
+    }
+
+    // Toggle the selected state of the image
+    if (selectedImages.includes(src)) {
+      setSelectedImages(selectedImages.filter((image) => image !== src));
+    } else {
+      setSelectedImages([...selectedImages, src]);
     }
   };
 
@@ -104,8 +117,32 @@ export default function BlockTest() {
             <div style={{ cursor: "pointer", display: "flex", gap: "2rem" }}>
               {test.data.urls.map((image, idx) => {
                 return (
-                  <div key={idx} onClick={() => handleImageClick(image)}>
+                  <div
+                    key={idx}
+                    onClick={() => handleImageClick(image)}
+                    style={{ position: "relative" }}
+                  >
                     <img src={image} alt="" width={100} height={100} />
+                    {selectedImages.includes(image) && (
+                      <div
+                        className="slct"
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          right: 15,
+                          border: "1px solid",
+                          fontSize: "1.3rem",
+                        }}
+                      >
+                        <i
+                          className="fa-solid fa-check"
+                          style={{
+                            backgroundColor: "lightgreen",
+                            padding: ".2rem",
+                          }}
+                        ></i>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -122,6 +159,7 @@ export default function BlockTest() {
                       controls={true}
                       ref={playerRef}
                       onProgress={handleProgress}
+                      ß
                     />
                     <VideoControl onSelectTime={handleSelectTime} />{" "}
                     <div>
