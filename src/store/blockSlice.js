@@ -13,7 +13,8 @@ const blockSlice = createSlice({
       state.testedBlocks = action.payload;
     },
     addingImgUrl(state, action) {
-      state.blockimageUrl.push(action.payload);
+      let imgUrl = action.payload
+      state.blockimageUrl.push(imgUrl);
     },
 
     removeFirstAddNew(state, action) {

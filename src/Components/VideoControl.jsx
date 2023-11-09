@@ -21,6 +21,7 @@ const VideoControl = ({ onSelectTime }) => {
       // Ensure that the start time is less than the end time
       if (startTime < endTime) {
         onSelectTime(startTime, endTime);
+        
       } else {
         alert("Start time must be less than end time.");
       }

@@ -20,6 +20,7 @@ export default function BlockTest() {
   const imgUrl = useSelector((state) => state.block.blockimageUrl);
   const dispatch = useDispatch();
   const [selectedImages, setSelectedImages] = useState([]);
+  const [videoSubmit, setVideoSubmit] = useState(false);
 
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
@@ -34,6 +35,8 @@ export default function BlockTest() {
     if (playerRef.current) {
       playerRef.current.seekTo(start);
     }
+
+    setVideoSubmit(true);
   };
 
   const handleProgress = (progress) => {
@@ -60,29 +63,33 @@ export default function BlockTest() {
 
   const handleImageClick = (src) => {
     if (imgUrl.length < 2) {
-      const selectedImg = [...imgUrl, src];
-      dispatch(addingImgUrl(...selectedImg));
+      // const selectedImg = [...imgUrl, src];
+      dispatch(addingImgUrl(src));
     } else {
       console.log(imgUrl);
       dispatch(removeFirstAddNew(src));
-      selectedImages.shift();
-      setSelectedImages(selectedImages.filter((image) => image !== src));
+      // selectedImages.shift();
+      // setSelectedImages(selectedImages.filter((image) => image !== src));
     }
+
 
     // Toggle the selected state of the image
-    if (selectedImages.includes(src)) {
-      setSelectedImages(selectedImages.filter((image) => image !== src));
-    } else {
-      setSelectedImages([...selectedImages, src]);
-    }
+    // if (selectedImages.includes(src)) {
+    //   setSelectedImages(selectedImages.filter((image) => image !== src));
+    // } else {
+    //   setSelectedImages([...selectedImages, src]);
+    // }
   };
 
-  const handleTestSubmit = async (title) => {
+  const handleTestSubmit = async (type, title, vidUrl) => {
     console.log("test submit!!");
     try {
       const testData = {
         title: title,
-        urls: imgUrl,
+        urls: test.data.blockType === "image" ? imgUrl : vidUrl,
+        startTime: startTime,
+        endTime: endTime,
+        blockType: type,
       };
 
       const res = await Analytic(testData);
@@ -159,7 +166,6 @@ export default function BlockTest() {
                       controls={true}
                       ref={playerRef}
                       onProgress={handleProgress}
-                      ß
                     />
                     <VideoControl onSelectTime={handleSelectTime} />{" "}
                     <div>
@@ -182,11 +188,33 @@ export default function BlockTest() {
                   marginTop: "2rem",
                   cursor: "pointer",
                 }}
-                onClick={() => handleTestSubmit(test.data.title)}
+                onClick={() => handleTestSubmit("image", test.data.title)}
               >
                 Submit Test
               </div>
               <ToastContainer />
+            </div>
+          )}
+
+          {videoSubmit && (
+            <div
+              style={{
+                width: "10rem",
+                backgroundColor: "gainsboro",
+                padding: "1rem",
+                borderRadius: "10px",
+                marginTop: "2rem",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                handleTestSubmit(
+                  "video",
+                  test.data.title,
+                  test.data.urls.map((video) => video)
+                )
+              }
+            >
+              Submit Test
             </div>
           )}
         </div>
