@@ -72,7 +72,6 @@ export default function BlockTest() {
       // setSelectedImages(selectedImages.filter((image) => image !== src));
     }
 
-
     // Toggle the selected state of the image
     // if (selectedImages.includes(src)) {
     //   setSelectedImages(selectedImages.filter((image) => image !== src));
@@ -130,7 +129,7 @@ export default function BlockTest() {
                     style={{ position: "relative" }}
                   >
                     <img src={image} alt="" width={100} height={100} />
-                    {selectedImages.includes(image) && (
+                    {imgUrl.includes(image) && (
                       <div
                         className="slct"
                         style={{
