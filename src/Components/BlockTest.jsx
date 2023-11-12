@@ -7,7 +7,11 @@ import { Analytic } from "../api/AnalyticApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
-import { addingImgUrl, testedBlockById } from "../store/blockSlice";
+import {
+  addingImgUrl,
+  removeFirstAddNew,
+  testedBlockById,
+} from "../store/blockSlice";
 import { fetchTestedBlockById } from "../services";
 
 export default function BlockTest() {
@@ -15,6 +19,8 @@ export default function BlockTest() {
   const test = useSelector((state) => state.block.testedBlocks);
   const imgUrl = useSelector((state) => state.block.blockimageUrl);
   const dispatch = useDispatch();
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [videoSubmit, setVideoSubmit] = useState(false);
 
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
@@ -28,8 +34,9 @@ export default function BlockTest() {
 
     if (playerRef.current) {
       playerRef.current.seekTo(start);
-      //   playerRef.current.play();
     }
+
+    setVideoSubmit(true);
   };
 
   const handleProgress = (progress) => {
@@ -56,20 +63,32 @@ export default function BlockTest() {
 
   const handleImageClick = (src) => {
     if (imgUrl.length < 2) {
-      const selectedImg = [...imgUrl, src];
-      dispatch(addingImgUrl(...selectedImg));
+      // const selectedImg = [...imgUrl, src];
+      dispatch(addingImgUrl(src));
     } else {
       console.log(imgUrl);
-      toast.error("selection limit reached");
+      dispatch(removeFirstAddNew(src));
+      // selectedImages.shift();
+      // setSelectedImages(selectedImages.filter((image) => image !== src));
     }
+
+    // Toggle the selected state of the image
+    // if (selectedImages.includes(src)) {
+    //   setSelectedImages(selectedImages.filter((image) => image !== src));
+    // } else {
+    //   setSelectedImages([...selectedImages, src]);
+    // }
   };
 
-  const handleTestSubmit = async (title) => {
+  const handleTestSubmit = async (type, title, vidUrl) => {
     console.log("test submit!!");
     try {
       const testData = {
         title: title,
-        urls: imgUrl,
+        urls: test.data.blockType === "image" ? imgUrl : vidUrl,
+        startTime: startTime,
+        endTime: endTime,
+        blockType: type,
       };
 
       const res = await Analytic(testData);
@@ -104,8 +123,32 @@ export default function BlockTest() {
             <div style={{ cursor: "pointer", display: "flex", gap: "2rem" }}>
               {test.data.urls.map((image, idx) => {
                 return (
-                  <div key={idx} onClick={() => handleImageClick(image)}>
+                  <div
+                    key={idx}
+                    onClick={() => handleImageClick(image)}
+                    style={{ position: "relative" }}
+                  >
                     <img src={image} alt="" width={100} height={100} />
+                    {imgUrl.includes(image) && (
+                      <div
+                        className="slct"
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          right: 15,
+                          border: "1px solid",
+                          fontSize: "1.3rem",
+                        }}
+                      >
+                        <i
+                          className="fa-solid fa-check"
+                          style={{
+                            backgroundColor: "lightgreen",
+                            padding: ".2rem",
+                          }}
+                        ></i>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -144,11 +187,33 @@ export default function BlockTest() {
                   marginTop: "2rem",
                   cursor: "pointer",
                 }}
-                onClick={() => handleTestSubmit(test.data.title)}
+                onClick={() => handleTestSubmit("image", test.data.title)}
               >
                 Submit Test
               </div>
               <ToastContainer />
+            </div>
+          )}
+
+          {videoSubmit && (
+            <div
+              style={{
+                width: "10rem",
+                backgroundColor: "gainsboro",
+                padding: "1rem",
+                borderRadius: "10px",
+                marginTop: "2rem",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                handleTestSubmit(
+                  "video",
+                  test.data.title,
+                  test.data.urls.map((video) => video)
+                )
+              }
+            >
+              Submit Test
             </div>
           )}
         </div>

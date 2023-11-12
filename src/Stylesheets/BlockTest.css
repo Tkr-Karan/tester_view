@@ -1,3 +1,7 @@
 video{
     object-fit: cover;
 }
+
+.fa-solid{
+    position: absolute;
+}
