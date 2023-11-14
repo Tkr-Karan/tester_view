@@ -26,6 +26,47 @@ export default function BlockTest() {
   const [endTime, setEndTime] = useState(0);
   const playerRef = useRef(null);
 
+  const [surveyResponses, setSurveyResponses] = useState({});
+
+  // const handleSurveyInputChange = (questionName, answer) => {
+  //   setSurveyResponses((prevResponses) => ({
+  //     ...prevResponses,
+  //     [questionName]: answer,
+  //   }));
+  // };
+
+  const handleSurveyInputChange = (questionName, answer, option) => {
+    console.log(typeof option);
+    if (Array.isArray(option)) {
+      setSurveyResponses((prevResponses) => {
+        // If the question is already in the responses, update the array
+        if (prevResponses.hasOwnProperty(questionName)) {
+          const updatedOptions = prevResponses[questionName].includes(answer)
+            ? prevResponses[questionName].filter(
+                (selectedOption) => selectedOption !== answer
+              )
+            : [...prevResponses[questionName], answer];
+
+          return {
+            ...prevResponses,
+            [questionName]: updatedOptions,
+          };
+        } else {
+          // If the question is not in the responses, create a new array
+          return {
+            ...prevResponses,
+            [questionName]: [answer],
+          };
+        }
+      });
+    } else {
+      setSurveyResponses((prevResponses) => ({
+        ...prevResponses,
+        [questionName]: answer,
+      }));
+    }
+  };
+
   const navigate = useNavigate();
 
   const handleSelectTime = (start, end) => {
@@ -52,6 +93,7 @@ export default function BlockTest() {
     try {
       const response = await fetchTestedBlockById(blockID);
       dispatch(testedBlockById(response));
+      console.log(response);
     } catch (error) {
       console.error("Error while fetching data: ", error);
     }
@@ -89,7 +131,10 @@ export default function BlockTest() {
         startTime: startTime,
         endTime: endTime,
         blockType: type,
+        surveyResponses: surveyResponses,
       };
+
+      console.log(surveyResponses);
 
       const res = await Analytic(testData);
       if (res.success) {
@@ -152,6 +197,88 @@ export default function BlockTest() {
                   </div>
                 );
               })}
+            </div>
+          ) : test.data.blockType === "survey" ? (
+            <div>
+              {test.data.questionsData.map((question, idx) => {
+                return (
+                  <div key={idx}>
+                    {question.type === "input" && (
+                      <div>
+                        <p>{question.data}</p>
+                        <input
+                          type="text"
+                          onChange={(e) =>
+                            handleSurveyInputChange(
+                              question.data,
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    )}
+
+                    {question.type == "checkbox" && (
+                      <div>
+                        <p>{question.data.description}</p>{" "}
+                        {question.data.options.map((option, idx) => {
+                          return (
+                            <div key={idx}>
+                              <input
+                                type="checkbox"
+                                onChange={() =>
+                                  handleSurveyInputChange(
+                                    question.data.description,
+                                    option,
+                                    question.data.options
+                                  )
+                                }
+                              />
+                              <label>{option}</label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {question.type == "radio" && (
+                      <div>
+                        <p>{question.data.description}</p>{" "}
+                        {question.data.options.map((option, idx) => {
+                          return (
+                            <div key={idx}>
+                              <input
+                                type="radio"
+                                name={question.data.description}
+                                onChange={() =>
+                                  handleSurveyInputChange(
+                                    question.data.description,
+                                    option
+                                  )
+                                }
+                              />
+                              <label>{option}</label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              <div
+                style={{
+                  padding: ".8rem",
+                  backgroundColor: "grey",
+                  borderRadius: "10px",
+                  marginTop: "2rem",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleTestSubmit("survey", test.data.title)}
+              >
+                Submit
+                <ToastContainer />
+              </div>
             </div>
           ) : (
             <div>
