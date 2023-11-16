@@ -124,7 +124,7 @@ export default function BlockTest() {
       if (res.success) {
         toast.success("Image survey dded successfully");
         setTimeout(() => {
-          return navigate("/");
+          return navigate("/thanks-screen");
         }, 2000);
       } else {
         toast.error("Image survey failed!");
