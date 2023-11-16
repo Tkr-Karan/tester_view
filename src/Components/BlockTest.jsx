@@ -28,13 +28,6 @@ export default function BlockTest() {
 
   const [surveyResponses, setSurveyResponses] = useState({});
 
-  // const handleSurveyInputChange = (questionName, answer) => {
-  //   setSurveyResponses((prevResponses) => ({
-  //     ...prevResponses,
-  //     [questionName]: answer,
-  //   }));
-  // };
-
   const handleSurveyInputChange = (questionName, answer, option) => {
     console.log(typeof option);
     if (Array.isArray(option)) {
@@ -110,16 +103,7 @@ export default function BlockTest() {
     } else {
       console.log(imgUrl);
       dispatch(removeFirstAddNew(src));
-      // selectedImages.shift();
-      // setSelectedImages(selectedImages.filter((image) => image !== src));
     }
-
-    // Toggle the selected state of the image
-    // if (selectedImages.includes(src)) {
-    //   setSelectedImages(selectedImages.filter((image) => image !== src));
-    // } else {
-    //   setSelectedImages([...selectedImages, src]);
-    // }
   };
 
   const handleTestSubmit = async (type, title, vidUrl) => {
