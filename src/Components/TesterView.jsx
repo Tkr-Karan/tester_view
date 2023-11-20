@@ -25,12 +25,6 @@ export default function TesterView() {
     fetchingPublishedData();
   }, []);
 
-  const goToTest = (id) => {
-    console.log(id);
-
-    navigate(`/test/${id}`);
-  };
-
   return (
     <div className="tester-block-container">
       <h2>here you give your block test!!</h2>
@@ -44,7 +38,7 @@ export default function TesterView() {
                 colorMapping[test.blockType] || "lightcoral";
               return (
                 <div
-                  onClick={() => goToTest(test._id)}
+                  onClick={() => navigate(`/test/${test._id}`)}
                   className="tester-blocks"
                   key={test._id}
                   style={{ position: "relative", overflow: "hidden" }}
@@ -85,5 +79,4 @@ const colorMapping = {
   image: "lightcoral",
   video: "lightblue",
   survey: "lightgreen",
-  // Add more types and their corresponding colors as needed
 };
