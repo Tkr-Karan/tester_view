@@ -1,0 +1,48 @@
+.survey-questions{
+    width: 80%;
+    margin-bottom: 2rem;
+}
+
+.check-ques {
+  font-size: 1.5rem;
+  text-transform: capitalize;
+  font-weight: bold;
+  text-align: left;
+}
+
+.check-options {
+  font-size: 1.3rem;
+  display: flex;
+  gap: 1rem;
+  text-transform: capitalize;
+}
+
+.check-options input {
+  accent-color: rgb(107, 164, 107);
+}
+
+.ques-desc {
+  font-size: 1.5rem;
+  text-transform: capitalize;
+  font-weight: bold;
+  text-align: left;
+}
+/* 
+.input-ques{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+} */
+
+.num-and-ques{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 1rem;
+}
+
+.question-num{
+    text-align: start;
+    font-size: 2rem;
+}
+
