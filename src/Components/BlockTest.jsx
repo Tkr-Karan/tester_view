@@ -24,17 +24,15 @@ export default function BlockTest() {
   const test = useSelector((state) => state.block.testedBlocks);
   const imgUrl = useSelector((state) => state.block.blockimageUrl);
   const dispatch = useDispatch();
-  const [selectedImages, setSelectedImages] = useState([]);
   const [videoSubmit, setVideoSubmit] = useState(false);
 
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
+  const [startTime, setStartTime] = useState();
+  const [endTime, setEndTime] = useState();
 
   const [surveyResponses, setSurveyResponses] = useState({});
   const [loading, setLoading] = useState(true);
 
   const handleSurveyInputChange = (questionName, answer, option) => {
-    console.log(typeof option);
     if (Array.isArray(option)) {
       setSurveyResponses((prevResponses) => {
         // If the question is already in the responses, update the array
@@ -133,7 +131,7 @@ export default function BlockTest() {
         surveyResponses: surveyResponses,
       };
 
-      console.log(surveyResponses);
+      // console.log(surveyResponses);
 
       const res = await Analytic(testData);
       if (res.success) {

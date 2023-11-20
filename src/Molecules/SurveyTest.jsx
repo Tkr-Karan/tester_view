@@ -4,6 +4,8 @@ import "./SurveyTest.css";
 
 export const SurveyTest = (props) => {
   const { handleTestSubmit, handleSurveyInputChange, test } = props;
+
+  console.log(test);
   return (
     <div className="survey-questions">
       {test.data.questionsData.map((question, idx) => {
