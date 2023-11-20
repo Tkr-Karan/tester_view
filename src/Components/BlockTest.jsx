@@ -13,6 +13,8 @@ import {
   testedBlockById,
 } from "../store/blockSlice";
 import { fetchTestedBlockById } from "../services";
+import { SurveyTest } from "../Molecules/SurveyTest";
+import "./Stylesheets/BlockTest.css";
 
 export default function BlockTest() {
   const { id } = useParams();
@@ -143,10 +145,24 @@ export default function BlockTest() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+
           }}
         >
-          <h2>{test.data.title}</h2>
-          <p>{test.data.description}</p>
+          <div className="block-name-and-desc">
+            <div
+              style={{
+                position: "absolute",
+                top: "1.6rem",
+                left: "-2rem",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/")}
+            >
+              <i className="fa-solid fa-arrow-left"></i>
+            </div>
+            <h2>{test.data.title}</h2>
+            <p>{test.data.description}</p>
+          </div>
 
           {test.data.blockType === "image" ? (
             <div style={{ cursor: "pointer", display: "flex", gap: "2rem" }}>
@@ -183,87 +199,11 @@ export default function BlockTest() {
               })}
             </div>
           ) : test.data.blockType === "survey" ? (
-            <div>
-              {test.data.questionsData.map((question, idx) => {
-                return (
-                  <div key={idx}>
-                    {question.type === "input" && (
-                      <div>
-                        <p>{question.data}</p>
-                        <input
-                          type="text"
-                          onChange={(e) =>
-                            handleSurveyInputChange(
-                              question.data,
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    )}
-
-                    {question.type == "checkbox" && (
-                      <div>
-                        <p>{question.data.description}</p>{" "}
-                        {question.data.options.map((option, idx) => {
-                          return (
-                            <div key={idx}>
-                              <input
-                                type="checkbox"
-                                onChange={() =>
-                                  handleSurveyInputChange(
-                                    question.data.description,
-                                    option,
-                                    question.data.options
-                                  )
-                                }
-                              />
-                              <label>{option}</label>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {question.type == "radio" && (
-                      <div>
-                        <p>{question.data.description}</p>{" "}
-                        {question.data.options.map((option, idx) => {
-                          return (
-                            <div key={idx}>
-                              <input
-                                type="radio"
-                                name={question.data.description}
-                                onChange={() =>
-                                  handleSurveyInputChange(
-                                    question.data.description,
-                                    option
-                                  )
-                                }
-                              />
-                              <label>{option}</label>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-
-              <div
-                style={{
-                  padding: ".8rem",
-                  backgroundColor: "grey",
-                  borderRadius: "10px",
-                  marginTop: "2rem",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleTestSubmit("survey", test.data.title)}
-              >
-                Submit
-                <ToastContainer />
-              </div>
-            </div>
+            <SurveyTest
+              handleTestSubmit={handleTestSubmit}
+              handleSurveyInputChange={handleSurveyInputChange}
+              test={test}
+            />
           ) : (
             <div>
               {test.data.urls.map((video, idx) => {
