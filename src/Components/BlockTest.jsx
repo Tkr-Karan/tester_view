@@ -15,6 +15,7 @@ import {
 import { fetchTestedBlockById } from "../services";
 import { SurveyTest } from "../Molecules/SurveyTest";
 import "./Stylesheets/BlockTest.css";
+import Loader from "../Atoms/Loader";
 
 export default function BlockTest() {
   const { id } = useParams();
@@ -29,6 +30,7 @@ export default function BlockTest() {
   const playerRef = useRef(null);
 
   const [surveyResponses, setSurveyResponses] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const handleSurveyInputChange = (questionName, answer, option) => {
     console.log(typeof option);
@@ -84,19 +86,27 @@ export default function BlockTest() {
     }
   };
 
-  const fetchBlockById = async (blockID) => {
-    try {
-      const response = await fetchTestedBlockById(blockID);
-      dispatch(testedBlockById(response));
-      console.log(response);
-    } catch (error) {
-      console.error("Error while fetching data: ", error);
-    }
-  };
-
   useEffect(() => {
-    fetchBlockById(id);
-  }, [id]);
+    const fetchBlockData = async () => {
+      setLoading(true); // Set loading to true when fetching new data
+      try {
+        const response = await fetchTestedBlockById(id);
+        dispatch(testedBlockById(response));
+        console.log(response);
+      } catch (error) {
+        console.error("Error while fetching data: ", error);
+      } finally {
+        setLoading(false); // Set loading to false when data fetching is done
+      }
+    };
+
+    fetchBlockData();
+
+    // Cleanup function to clear previous block data
+    return () => {
+      dispatch(testedBlockById(null)); // Reset testedBlocks data on cleanup
+    };
+  }, [id, dispatch]);
 
   const handleImageClick = (src) => {
     if (imgUrl.length < 2) {
@@ -138,14 +148,26 @@ export default function BlockTest() {
 
   return (
     <div>
-      {test && (
+      {loading && (
+        <div
+          style={{
+            width: "100vw",
+            height: "100vh",
+            display:"flex",
+            justifyContent:"center",
+            alignItems:"center"
+          }}
+        >
+          <Loader />
+        </div>
+      )}
+      {!loading && test && (
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-
           }}
         >
           <div className="block-name-and-desc">
