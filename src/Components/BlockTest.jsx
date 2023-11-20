@@ -16,6 +16,8 @@ import { fetchTestedBlockById } from "../services";
 import { SurveyTest } from "../Molecules/SurveyTest";
 import "./Stylesheets/BlockTest.css";
 import Loader from "../Atoms/Loader";
+import { ImageTest } from "../Molecules/ImageTest";
+import { VideoTest } from "../Molecules/VideoTest";
 
 export default function BlockTest() {
   const { id } = useParams();
@@ -27,7 +29,6 @@ export default function BlockTest() {
 
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
-  const playerRef = useRef(null);
 
   const [surveyResponses, setSurveyResponses] = useState({});
   const [loading, setLoading] = useState(true);
@@ -65,6 +66,8 @@ export default function BlockTest() {
   };
 
   const navigate = useNavigate();
+
+  const playerRef = useRef(null);
 
   const handleSelectTime = (start, end) => {
     setStartTime(start);
@@ -153,9 +156,9 @@ export default function BlockTest() {
           style={{
             width: "100vw",
             height: "100vh",
-            display:"flex",
-            justifyContent:"center",
-            alignItems:"center"
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Loader />
@@ -187,39 +190,11 @@ export default function BlockTest() {
           </div>
 
           {test.data.blockType === "image" ? (
-            <div style={{ cursor: "pointer", display: "flex", gap: "2rem" }}>
-              {test.data.urls.map((image, idx) => {
-                return (
-                  <div
-                    key={idx}
-                    onClick={() => handleImageClick(image)}
-                    style={{ position: "relative" }}
-                  >
-                    <img src={image} alt="" width={100} height={100} />
-                    {imgUrl.includes(image) && (
-                      <div
-                        className="slct"
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          right: 15,
-                          border: "1px solid",
-                          fontSize: "1.3rem",
-                        }}
-                      >
-                        <i
-                          className="fa-solid fa-check"
-                          style={{
-                            backgroundColor: "lightgreen",
-                            padding: ".2rem",
-                          }}
-                        ></i>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <ImageTest
+              handleImageClick={handleImageClick}
+              imgUrl={imgUrl}
+              test={test}
+            />
           ) : test.data.blockType === "survey" ? (
             <SurveyTest
               handleTestSubmit={handleTestSubmit}
@@ -227,27 +202,14 @@ export default function BlockTest() {
               test={test}
             />
           ) : (
-            <div>
-              {test.data.urls.map((video, idx) => {
-                return (
-                  <div key={idx}>
-                    <ReactPlayer
-                      url={video}
-                      width={400}
-                      height={200}
-                      controls={true}
-                      ref={playerRef}
-                      onProgress={handleProgress}
-                    />
-                    <VideoControl onSelectTime={handleSelectTime} />{" "}
-                    <div>
-                      Selected Time Range: {startTime} seconds - {endTime}{" "}
-                      seconds
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <VideoTest
+              playerRef={playerRef}
+              test={test}
+              startTime={startTime}
+              endTime={endTime}
+              handleProgress={handleProgress}
+              handleSelectTime={handleSelectTime}
+            />
           )}
           {imgUrl.length == 2 && (
             <div>
@@ -287,6 +249,7 @@ export default function BlockTest() {
               }
             >
               Submit Test
+              <ToastContainer />
             </div>
           )}
         </div>
