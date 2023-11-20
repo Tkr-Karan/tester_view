@@ -4,12 +4,6 @@ import "./SurveyTest.css";
 
 export const SurveyTest = (props) => {
   const { handleTestSubmit, handleSurveyInputChange, test } = props;
-  const [questionNumber, setQuestionNumber] = useState(1);
-
-  const incrementQuestionNumber = () => {
-    setQuestionNumber((prevQuestionNumber) => prevQuestionNumber + 1);
-  };
-
   return (
     <div className="survey-questions">
       {test.data.questionsData.map((question, idx) => {
@@ -28,6 +22,8 @@ export const SurveyTest = (props) => {
                   onChange={(e) =>
                     handleSurveyInputChange(question.data, e.target.value)
                   }
+                  placeholder="please fill the answer"
+                  required
                 />
               </div>
             )}
@@ -50,6 +46,7 @@ export const SurveyTest = (props) => {
                             question.data.options
                           )
                         }
+                        required={true}
                       />
                       <label>{option}</label>
                     </div>
@@ -86,7 +83,9 @@ export const SurveyTest = (props) => {
         );
       })}
 
-      <div style={{width:"100%", display:"flex", justifyContent:"flex-end"}}>
+      <div
+        style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}
+      >
         <div
           style={{
             padding: ".8rem",
